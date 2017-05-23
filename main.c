@@ -19,6 +19,7 @@ int main(){
   char out[2000];
 	char seperator = " ";
 	char token[256];
+	char res;
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
@@ -45,13 +46,15 @@ int main(){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
 				 //hier irgendwo fork?
 				 scanf("%[^'\n']", &in);
-				 strtoken(in, seperator, token, 3);
+
 	       while (read(fileDescriptor, in, 2000) > 0){
+					  strtoken(in, seperator, token, 3);
+
 						switch (token[0]){
-							case 'PUT': ; break;
-							case 'GET': ; break;
-							case 'DEL': ; break;
-							default: ;
+							case 'PUT': put(token[1], token[2]); break;
+							case 'GET': get(token[1], res); break;
+							case 'DEL': del(token[1], res); break;
+							default: printf("\nUngültige Eingabe\n"); ;
 						}
 		        write(fileDescriptor, out, 2000);
 	        }
