@@ -5,13 +5,10 @@
 #include <netinet/in.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 int main(){
 
-	int eingabe;
-	char value;
-	char key;
-  char res;
 
   int sock;
   struct sockaddr_in server;
@@ -20,6 +17,8 @@ int main(){
   client_len = sizeof(client);
   char in[2000];
   char out[2000];
+	char seperator = " ";
+	char token[256];
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
@@ -31,14 +30,9 @@ int main(){
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(4711);
 
-    if(bind(sock, (struct sockaddr *) &server, sizeof(server)) <0){
-			perror("bind socket to server_addr");
-			exit(2);
-		}
+    bind(sock, (struct sockaddr *) &server, sizeof(server));
 
-    if(listen(sock, 128) < 0){
-			perror("listening for connections");
-		}
+    listen(sock, 128);
 
     //fileDescriptor = accept(sock, &client, &client_len);
 
@@ -48,15 +42,30 @@ int main(){
       }*/
 
       while (TRUE){
-	       fileDescriptor = accept(sock, &client, &client_len);
-	        while (read(fileDescriptor, in, 2000) > 0){
-		          write(fileDescriptor, out, 2000);
+	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
+				 //hier irgendwo fork?
+				 scanf("%[^'\n']", &in);
+				 strtoken(in, seperator, token, 3);
+	       while (read(fileDescriptor, in, 2000) > 0){
+						switch (token[0]){
+							case 'PUT': ; break;
+							case 'GET': ; break;
+							case 'DEL': ; break;
+							default: ;
+						}
+		        write(fileDescriptor, out, 2000);
 	        }
 	        close(fileDescriptor);
       }
 
 
-  /*printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
+  /*
+	int eingabe;
+	char value;
+	char key;
+  char res;
+
+	printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
 
 	do{
 		scan("%d", &eingabe);
@@ -84,3 +93,11 @@ int main(){
 	} while(eingabe != 4);*/
 	return 0;
 }
+
+int strtoken(char *str, char *separator, char **token, int size) {
+    int i=0;
+    token[0] = strtok(str, separator);
+    while(token[i++] && i < size)
+        token[i] = strtok(NULL, separator);
+    return (i);
+	}
