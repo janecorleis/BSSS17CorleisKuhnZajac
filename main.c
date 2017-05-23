@@ -3,9 +3,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <stdio.h>
 #include <sys/time.h>
-#include <unisted.h>
+#include <unistd.h>
 
 int main(){
 
@@ -32,16 +31,21 @@ int main(){
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(4711);
 
-    bind(sock, &server, sizeof(server));
+    if(bind(sock, (struct sockaddr *) &server, sizeof(server)) <0){
+			perror("bind socket to server_addr");
+			exit(2);
+		}
 
-    listen(sock, 5);
+    if(listen(sock, 128) < 0){
+			perror("listening for connections");
+		}
 
-    fileDescriptor = accept(sock, &client, &client_len);
+    //fileDescriptor = accept(sock, &client, &client_len);
 
-    if(fileDescriptor < 0){
+    /*if(fileDescriptor < 0){
 	     perror("accept");
 	      exit(2);
-      }
+      }*/
 
       while (TRUE){
 	       fileDescriptor = accept(sock, &client, &client_len);
@@ -50,7 +54,6 @@ int main(){
 	        }
 	        close(fileDescriptor);
       }
-
 
 
   printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
