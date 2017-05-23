@@ -56,7 +56,7 @@ int main(){
       }
 
 
-  printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
+  /*printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
 
 	do{
 		scan("%d", &eingabe);
@@ -81,6 +81,6 @@ int main(){
         del();
 				break;
 			case 4: break;
-	} while(eingabe != 4);
+	} while(eingabe != 4);*/
 	return 0;
 }
