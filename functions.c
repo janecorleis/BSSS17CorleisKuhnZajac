@@ -1,9 +1,9 @@
 ﻿#include <stdio.h>
 #include "header.h"
 
-const int MAX_LENGTH = 128;
+int MAX_LENGTH = 128;
 int current_length = 0;
-daten daten_array[MAX_LENGTH];
+struct daten daten_array[MAX_LENGTH];
 int a;
 
 /*****
@@ -20,9 +20,9 @@ int get(char *key, char *res) {
         for(a = 0; a < MAX_LENGTH; a++)
         {
             //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-            if(strcmp(daten_array[a].key, &key) == 0) {
+            if(strcmp(daten_array[a].key, key) == 0) {
                 printf("Key: %s \n Value: %s", daten_array[a].key, daten_array[a].value);
-                res = &daten_array[a].value;
+                res = daten_array[a].value;
             } else {
               printf("\nWert nicht gefunden!");
             }
@@ -46,18 +46,18 @@ int put(char *key, char *value, char *res) {
       for(a = 0; a < MAX_LENGTH; a++)
       {
           //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-          if(strcmp(daten_array[a].key, &key) == 0) {
-            res = &daten_array[a].value;
-            daten_array[a].value = &value;
+          if(strcmp(daten_array[a].key, key) == 0) {
+            res = daten_array[a].value;
+            daten_array[a].value = value;
           }
         }
     } else {
         current_length++;
         //strcpy(v1, v2) kopiert v2 in v1
-        strcpy(daten_array[current_length].key, &key);
-        strcpy(daten_array[current_length].value, &value);
+        strcpy(daten_array[current_length].key, key);
+        strcpy(daten_array[current_length].value, value);
         printf("Key: %s und\nValue: %s\n wurden hunzugefuegt.", daten_array[a].key, daten_array[a].value);
-        res = &daten_array[current_length].value;
+        res = daten_array[current_length].value;
     }
 
     return 0;
@@ -77,11 +77,11 @@ int del(char *key, char *res) {
     } else {
         for(a = 0; a < MAX_LENGTH; a++)
         {
-            if(strcmp(store_array[a].key, &key) == 0) {
-                res = &store_array[a].value;
+            if(strcmp(daten_array[a].key, key) == 0) {
+                res = daten_array[a].value;
                 printf("Key: %s und\nValue: %s\n wurden entfernt.", store_array[a].key, store_array[a].value);
-                strcpy(store_array[current_length].key, null);
-                strcpy(store_array[current_length].value, null);
+                strcpy(daten_array[current_length].key, NULL);
+                strcpy(daten_array[current_length].value, NULL);
                 current_length--;
               } else {
                 printf("\nNichts gefunden");
