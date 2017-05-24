@@ -13,7 +13,8 @@ int main(){
   int sock;
   struct sockaddr_in server;
   struct sockaddr_in client;
-  int fileDescriptor, client_len;
+  int fileDescriptor;
+  unsigned long client_len;
   client_len = sizeof(client);
   char in[2000];
   char out[2000];
