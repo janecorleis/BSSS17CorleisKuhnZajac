@@ -91,3 +91,11 @@ int del(char *key, char *res) {
     //Was machen, wenn Wert nicht gefunden wurde?
     return 0;
 }
+
+int strtoken(char *str, char *separator, char **token, int size) {
+    int i=0;
+    token[0] = strtok(str, separator);
+    while(token[i++] && i < size)
+        token[i] = strtok(NULL, separator);
+    return (i);
+}
