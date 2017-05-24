@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "header.h"
+#include "functions.h"
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -8,7 +8,6 @@
 #include <stdlib.h>
 
 int main(){
-
 
   int sock;
   struct sockaddr_in server;
@@ -19,8 +18,9 @@ int main(){
   char in[2000];
   char out[2000];
 	char seperator = " ";
-	char token[256];
-	char res;
+	char *token[256];
+	char *res;
+  int var;
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
@@ -28,36 +28,47 @@ int main(){
 	    exit(2);
     }
 
+    int option = 1;
+    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const void *) &option, sizeof(int));
+
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
-    server.sin_port = htons(4711);
+    server.sin_port = htons(1337);
 
-    bind(sock, (struct sockaddr *) &server, sizeof(server));
+    if(bind(sock, (struct sockaddr *) &server, sizeof(server)) < 0){
+      printf("Error on Binding");
+    };
 
-    listen(sock, 128);
+    if(listen(sock, 5) < 0){
+      printf("Error on listening");
+    };
 
-    //fileDescriptor = accept(sock, &client, &client_len);
-
-    /*if(fileDescriptor < 0){
-	     perror("accept");
-	      exit(2);
-      }*/
-
-      while (TRUE){
+      while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
 				 //hier irgendwo fork?
-				 scanf("%[^'\n']", &in);
+				char greet[12] = "Hallo Client";
+        write (fileDescriptor, greet, strlen(greet));
 
 	       while (read(fileDescriptor, in, 2000) > 0){
 					  strtoken(in, seperator, token, 3);
 
-						switch (token[0]){
-							case 'PUT': put(token[1], token[2]); break;
-							case 'GET': get(token[1], res); break;
-							case 'DEL': del(token[1], res); break;
+            int eingabe;
+
+            if(strcmp(token[0], "PUT") == 0){
+              eingabe = 1;
+            } else if (strcmp(token[0], "GET") == 0){
+              eingabe = 2;
+            } else if (strcmp (token[0], "DEL") == 0){
+              eingabe = 3;
+            }
+
+						switch (eingabe){
+							case 1: var = put(token[1], token[2]); break;
+							case 2: var = get(token[1], res); break;
+							case 3: var = del(token[1], res); break;
 							default: printf("\nUngültige Eingabe\n"); ;
 						}
-		        write(fileDescriptor, out, 2000);
+		       // write(fileDescriptor, in, strlen(in));
 	        }
 	        close(fileDescriptor);
       }

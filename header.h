@@ -1,10 +1,10 @@
-#ifndef HEADER_H
-#define HEADER_H
+#ifndef FUNCTIONS_H
+#define FUNCTIONS_H
 
-struct Daten {
-	char key[50];
-	char value[50];
-} daten;
+struct daten {
+	char key[128];
+	char value[128];
+} Daten;
 
 extern int put(char* key, char* value, char* res);	//fügt hinzu
 extern int get(char* key, char* res);			//holt etwas
