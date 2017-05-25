@@ -21,12 +21,13 @@ int main(){
 	char *token[256];
 	char *res;
   int var;
+  int read_size;
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
 	   perror("creating stream socket");
-	    exit(2);
-    }
+	   exit(1);
+  }
 
     int option = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const void *) &option, sizeof(int));
@@ -49,26 +50,23 @@ int main(){
 				char greet[12] = "Hallo Client";
         write (fileDescriptor, greet, strlen(greet));
 
-	       while (read(fileDescriptor, in, 2000) > 0){
+	       while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
 					  strtoken(in, seperator, token, 3);
 
-            int eingabe;
-
             if(strcmp(token[0], "PUT") == 0){
-              eingabe = 1;
+              var = put(token[1], token[2], res);
+              puts("PUT funktioniert\n");
             } else if (strcmp(token[0], "GET") == 0){
-              eingabe = 2;
+              var = get(token[1], res);
+              puts("GET funktioniert\n");
             } else if (strcmp (token[0], "DEL") == 0){
-              eingabe = 3;
+              var = del(token[1], res);
+              puts("DEL funktioniert\n");
+            } else {
+              puts("Ungültige Eingabe vom Client\n"):
             }
 
-						switch (eingabe){
-							case 1: var = put(token[1], token[2]); break;
-							case 2: var = get(token[1], res); break;
-							case 3: var = del(token[1], res); break;
-							default: printf("\nUngültige Eingabe\n"); ;
-						}
-		       // write(fileDescriptor, in, strlen(in));
+		       write(fileDescriptor, out, strlen(out));
 	        }
 	        close(fileDescriptor);
       }

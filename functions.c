@@ -16,18 +16,18 @@ int get(char *key, char *res) {
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
-    } else {
+    } else if(current_length != 0){
         for(a = 0; a < 128; a++) {
             //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
             if(strcmp((const char *)daten_array.key[a], key) == 0) {
                 printf("Key: %s \n Value: %s", daten_array.key[a], daten_array.value[a]);
-                res = &daten_array.value[a]; // & hinzugefuegt, weil in den Pointer ja die Adresse soll -> unten auch überall angepasst
+                *res = (char) daten_array.value[a]; // & hinzugefuegt, weil in den Pointer ja die Adresse soll -> unten auch überall angepasst
                 return 0; //Kann sein, dass das hier falsch ist, aber vielleicht ist es auch richtig
-            } else {
-              printf("Wert nicht gefunden!\n");
-              return -1;
             }
         }
+    } else {
+      printf("Wert nicht gefunden!\n");
+      return -1;
     }
 }
 
@@ -41,8 +41,8 @@ int get(char *key, char *res) {
 int put(char *key, char *value, char *res) {
    for(a = 0; a < 128; a++) {
         //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-        if(strcmp((const char *)daten_array.key[a], key) == 0) { //(const char *) eingefügt, weil es oben so war
-            res = &daten_array.value[a];
+        if(strcmp((const char *) daten_array.key[a], key) == 0) { //(const char *) eingefügt, weil es oben so war
+            *res = (char) daten_array.value[a];
             daten_array.value[a] = value; //Kann sein, dass hier &value hin muss, da bin ich mir nicht sicher
             return 0;
         }
@@ -56,7 +56,7 @@ int put(char *key, char *value, char *res) {
         strcpy(daten_array.key[current_length], key);
         strcpy(daten_array.value[current_length], value);
         printf("Key: %s und Value: %s wurden hunzugefuegt.\n", daten_array.key[a], daten_array.value[a]);
-        res = &daten_array.value[current_length];
+        *res = (char)daten_array.value[current_length];
         return 0;
     }
 }
