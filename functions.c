@@ -3,7 +3,7 @@
 #include <string.h>
 
 int current_length = 0;
-struct daten daten_array;
+struct daten kv;
 int a;
 
 /*****
@@ -19,13 +19,14 @@ int get(char *key, char *res) {
     } else if(current_length != 0){
         for(a = 0; a < 128; a++) {
             //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-            if(strcmp((const char *)daten_array.key[a], key) == 0) {
-                printf("Key: %s \n Value: %s", daten_array.key[a], daten_array.value[a]);
-                *res = (char) daten_array.value[a]; // & hinzugefuegt, weil in den Pointer ja die Adresse soll -> unten auch überall angepasst
+            if(strcmp((const char *)kv.key[a], key) == 0) {
+                printf("Key: %s \n Value: %s", kv.key[a], kv.value[a]);
+                *res = (char) kv.value[a]; // & hinzugefuegt, weil in den Pointer ja die Adresse soll -> unten auch überall angepasst
                 return 0; //Kann sein, dass das hier falsch ist, aber vielleicht ist es auch richtig
             }
         }
     } else {
+      *res = (char) "Kein passender Wert gefunden";
       printf("Wert nicht gefunden!\n");
       return -1;
     }
@@ -41,22 +42,23 @@ int get(char *key, char *res) {
 int put(char *key, char *value, char *res) {
    for(a = 0; a < 128; a++) {
         //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-        if(strcmp((const char *) daten_array.key[a], key) == 0) { //(const char *) eingefügt, weil es oben so war
-            *res = (char) daten_array.value[a];
-            daten_array.value[a] = value; //Kann sein, dass hier &value hin muss, da bin ich mir nicht sicher
+        if(strcmp((const char *) kv.key[a], key) == 0) { //(const char *) eingefügt, weil es oben so war
+            *res = (char) kv.value[a];
+            kv.value[a] = value; //Kann sein, dass hier &value hin muss, da bin ich mir nicht sicher
             return 0;
         }
     }
     if (current_length == 128) {
+        *res = (char) "Es kann nichts mehr hinzugefügt werden";
         printf("Es kann nichts mehr hinzugefuegt werden\n");
         return -1;
     } else {
         current_length++;
         //strcpy(v1, v2) kopiert v2 in v1
-        strcpy(daten_array.key[current_length], key);
-        strcpy(daten_array.value[current_length], value);
-        printf("Key: %s und Value: %s wurden hunzugefuegt.\n", daten_array.key[a], daten_array.value[a]);
-        *res = (char)daten_array.value[current_length];
+        strcpy(kv.key[current_length], key);
+        strcpy(key.value[current_length], value);
+        printf("Key: %s und Value: %s wurden hunzugefuegt.\n", kv.key[current_length], kv.value[current_length]);
+        *res = (char)kv.value[current_length];
         return 0;
     }
 }
@@ -74,18 +76,19 @@ int del(char *key, char *res) {
         return -1;
     } else {
         for(a = 0; a < 128; a++) {
-            if(strcmp((const char *)daten_array.key[a], key) == 0) { //Hab hier man (const char *) eingefügt, weil es oben auch war
-                res = &daten_array.value[a];
+            if(strcmp((const char *)kv.key[a], key) == 0) { //Hab hier man (const char *) eingefügt, weil es oben auch war
+                *res = (char)kv.value[a];
                 printf("Key: %s und Value: %s wurden entfernt.\n", store_array.key[a], store_array.value[a]);
-                strcpy(daten_array.key[a], NULL);
-                strcpy(daten_array.value[a], NULL);
-                for (int b = current_length; b > a; b--) { //Kann das so hinkommen? :S Hier sollen die darauffolgenden Einträge nach vorn gerückt werden, damit keine Lücken im Array sind
+                strcpy(kv.key[a], NULL);
+                strcpy(kv.value[a], NULL);
+                /*for (int b = current_length; b > a; b--) { //Kann das so hinkommen? :S Hier sollen die darauffolgenden Einträge nach vorn gerückt werden, damit keine Lücken im Array sind
                     daten_array.key[b-1];
                     daten_array.value[b-1];
-                }
+                }*/
                 current_length--;
                 return 0;
               } else {
+                *res = (char) "Kein passender Wert vorhanden ist";
                 printf("Nichts gefunden\n");
                 return -1;
               }

@@ -63,7 +63,7 @@ int main(){
               var = del(token[1], res);
               puts("DEL funktioniert\n");
             } else {
-              puts("Ungültige Eingabe vom Client\n"):
+              puts("Ungültige Eingabe vom Client\n");
             }
 
 		       write(fileDescriptor, out, strlen(out));
