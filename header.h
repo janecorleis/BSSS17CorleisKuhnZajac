@@ -1,11 +1,13 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-struct daten {
-	char key[128];
-	char value[128];
-} Daten;
+#define LENGTH 32
 
+struct daten {
+	char key[LENGTH];
+	char value[LENGTH];
+} ;
+struct daten kv[LENGTH];
 extern int put(char* key, char* value, char* res);	//fügt hinzu
 extern int get(char* key, char* res);			//holt etwas
 extern int del(char* key, char* res);			//löscht etwas
