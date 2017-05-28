@@ -7,6 +7,9 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+void bzero(void *to, size_t count){
+    memset(to, 0, count);
+}
 int main(){
 
   int sock;
@@ -65,7 +68,7 @@ int main(){
             } else {
               puts("Ungültige Eingabe vom Client\n");
             }
-
+            bzero(in, sizeof(in));
 		       write(fileDescriptor, out, strlen(out));
 	        }
 	        close(fileDescriptor);

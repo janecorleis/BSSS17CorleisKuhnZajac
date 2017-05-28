@@ -3,7 +3,6 @@
 #include <string.h>
 
 int current_length = 0;
-struct daten kv;
 int a;
 
 /*****
@@ -16,20 +15,19 @@ int get(char *key, char *res) {
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
-    } else if(current_length != 0){
-        for(a = 0; a < 128; a++) {
+    } else {
+        for(a = 0; a < LENGTH; a++) {
             //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-            if(strcmp((const char *)kv.key[a], key) == 0) {
+            /*if(strcmp((const char *)kv.key[a], key) == 0) {
                 printf("Key: %s \n Value: %s", kv.key[a], kv.value[a]);
                 *res = (char) kv.value[a]; // & hinzugefuegt, weil in den Pointer ja die Adresse soll -> unten auch überall angepasst
-                return 0; //Kann sein, dass das hier falsch ist, aber vielleicht ist es auch richtig
+                return 0;*/ //Kann sein, dass das hier falsch ist, aber vielleicht ist es auch richtig
             }
         }
-    } else {
-      *res = (char) "Kein passender Wert gefunden";
+    }
       printf("Wert nicht gefunden!\n");
       return -1;
-    }
+
 }
 
 /*****
@@ -40,25 +38,30 @@ int get(char *key, char *res) {
 *******/
 
 int put(char *key, char *value, char *res) {
-   for(a = 0; a < 128; a++) {
+   for(a = 0; a < LENGTH; a++) {
         //strcmp(v1, v2) vergleicht char v1 und char v2 -> wenn 0, sind sie gleich
-        if(strcmp((const char *) kv.key[a], key) == 0) { //(const char *) eingefügt, weil es oben so war
-            *res = (char) kv.value[a];
+        /*if(strcmp((const char *) kv[a].key, key) == 0) { //(const char *) eingefügt, weil es oben so war
+            *res = (char) kv[a].value;
             kv.value[a] = value; //Kann sein, dass hier &value hin muss, da bin ich mir nicht sicher
-            return 0;
+            return 0;*/
+            printf("Schlüssel wird bereits verwendet\n");
+            strcpy(res, "Schluessel wird bereits verwendet"):
+            return -1;
         }
     }
-    if (current_length == 128) {
-        *res = (char) "Es kann nichts mehr hinzugefügt werden";
+    if (current_length == LENGTH) {
+        strcpy(res, "Es kann nichts mehr hinzugefügt werden");
         printf("Es kann nichts mehr hinzugefuegt werden\n");
         return -1;
     } else {
-        current_length++;
+
         //strcpy(v1, v2) kopiert v2 in v1
-        strcpy(kv.key[current_length], key);
-        strcpy(key.value[current_length], value);
-        printf("Key: %s und Value: %s wurden hunzugefuegt.\n", kv.key[current_length], kv.value[current_length]);
-        *res = (char)kv.value[current_length];
+        strcpy(kv[current_length].key, key);
+        strcpy(kv[current_length].value, value);
+        printf("Key: %s und Value: %s wurden hunzugefuegt.\n", kv[current_length].key, kv[current_length].value);
+        strcpy(res, kv[current_length].value);
+        current_length++;
+
         return 0;
     }
 }
