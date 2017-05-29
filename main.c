@@ -6,6 +6,9 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <sys/wait.h>
 
 void bzero(void *to, size_t count){
     memset(to, 0, count);
@@ -25,6 +28,9 @@ int main(){
 	char *res;
   int var;
   int read_size;
+  /* int pid, i, id, y;
+  struct daten *sm[LENGTH];
+  */
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
@@ -46,10 +52,26 @@ int main(){
     if(listen(sock, 5) < 0){
       printf("Error on listening");
     };
+    /* id = shmget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
+    for(y = 0; y < LENGTH; y++){
+     sm[y] = (struct daten *) shmat (id, 0, 0);
+    }
+    */
 
       while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
-				 //hier irgendwo fork?
+				/* pid = fork();
+          if(pid < 0){
+          printf("Fehler!\n");
+          exit(1);
+        } else if(pid > 0){
+         //Vaterprozess
+         close(fildeDescriptor);
+       } else if(pid == 0){
+        //Kindprozess
+        close(sock);
+
+        */
 				char greet[12] = "Hallo Client";
         write (fileDescriptor, greet, strlen(greet));
 
@@ -57,55 +79,23 @@ int main(){
 					  strtoken(in, seperator, token, 3);
 
             if(strcmp(token[0], "PUT") == 0){
-              var = put(token[1], token[2], res);
+              var = put(token[1], token[2], res/*, sm*/);
               puts("PUT funktioniert\n");
             } else if (strcmp(token[0], "GET") == 0){
-              var = get(token[1], res);
+              var = get(token[1], res/*, sm*/);
               puts("GET funktioniert\n");
             } else if (strcmp (token[0], "DEL") == 0){
-              var = del(token[1], res);
+              var = del(token[1], res/*, sm*/);
               puts("DEL funktioniert\n");
             } else {
               puts("Ungültige Eingabe vom Client\n");
             }
             bzero(in, sizeof(in));
+            bzero((char *) &res, sizeof((char *) &res));
 		       write(fileDescriptor, out, strlen(out));
 	        }
 	        close(fileDescriptor);
+        //}
       }
-
-
-  /*
-	int eingabe;
-	char value;
-	char key;
-  char res;
-
-	printf("\n1: Put\n2: Get\n3: Delete\n4: Abbrechen");
-
-	do{
-		scan("%d", &eingabe);
-		if(eingabe > 4){
-			printf("Falsche Eingabe!");
-		}
-
-		switch(eingabe){
-			case 1: printf("\nPUT ");
-				scanf("%d", &key);
-				printf(" ");
-				scanf("%d", &value);
-        put();
-				break;
-			case 2: printf("\nGET ");
-				scanf("%d", &key);
-				printf("\n%d", value);
-        get();
-				break;
-			case 3: printf("\nDEL");
-				scanf("%d", &key);
-        del();
-				break;
-			case 4: break;
-	} while(eingabe != 4);*/
 	return 0;
 }

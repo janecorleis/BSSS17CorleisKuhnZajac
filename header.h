@@ -8,9 +8,10 @@ struct daten {
 	char value[LENGTH];
 } ;
 struct daten kv[LENGTH];
-extern int put(char* key, char* value, char* res);	//fügt hinzu
-extern int get(char* key, char* res);			//holt etwas
-extern int del(char* key, char* res);			//löscht etwas
+
+extern int put(char *key, char* value, char* res/*, struct daten **shar_m    em*/);
+extern int get(char* key, char* res/*, struct daten **shar_mem*/);
+extern int del(char* key, char* res/*, struct daten **shar_mem*/);
 extern int strtoken(char *str, char *separator, char **token, int size);
 
 #endif
