@@ -76,13 +76,13 @@ int main(){
 					  strtoken(in, seperator, token, 3);
 
             if(strcmp(token[0], "PUT") == 0){
-              var = put(token[1], token[2], res/*, sm*/);
+              var = put(token[1], token[2], res, sm);
               puts("PUT funktioniert\n");
             } else if (strcmp(token[0], "GET") == 0){
-              var = get(token[1], res/*, sm*/);
+              var = get(token[1], res, sm);
               puts("GET funktioniert\n");
             } else if (strcmp (token[0], "DEL") == 0){
-              var = del(token[1], res/*, sm*/);
+              var = del(token[1], res, sm);
               puts("DEL funktioniert\n");
             } else {
               puts("Ungültige Eingabe vom Client\n");
