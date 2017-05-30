@@ -11,14 +11,14 @@ int a;
 * wird durch einen Rückgabewert darauf aufmerksam gemacht.
 * ****/
 
-int get(char *key, char *res) {
+int get(char *key, char *res, struct daten *sm) {
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
     } else {
         for(a = 0; a < LENGTH; a++) {
-          if(strcmp(kv[a].key, key) == 0){
-            strcpy(res, kv[a].value);
+          if(strcmp(sm[a].key, key) == 0){
+            strcpy(res, sm[a].value);
             return 0;
           }
         }
@@ -36,23 +36,23 @@ int get(char *key, char *res) {
 * IDEE: array_length-Variable anlegen, aufzählen beim Hinzufügen. Falls Array voll -> Error
 *******/
 
-int put(char *key, char *value, char *res) {
+int put(char *key, char *value, char *res, struct daten *sm) {
    for(a = 0; a < LENGTH; a++) {
      if(current_length == LENGTH){
         strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
         printf("\nEs koennen keine Daten hinzugefuegt werden!\n");
         return -1;
-     } else if(strcmp(kv[a].key, key)== 0){
-        strcpy(res, kv[a].value);
-        strcpy(kv[a].value, value);
+     } else if(strcmp(sm[a].key, key)== 0){
+        strcpy(res, sm[a].value);
+        strcpy(sm[a].value, value);
         printf("\nValue wurde ersetzt");
         return 0;
-     }else if(strcmp(kv[a].key, NULL) == 0){
-        strcpy(kv[a].key, key);
-        strcpy(kv[a].value, value);
+     }else if(strcmp(sm[a].key, NULL) == 0){
+        strcpy(sm[a].key, key);
+        strcpy(sm[a].value, value);
         strcpy(res, value);
         current_length++;
-        printf("Key: %s und Value: %s", kv[a].key, kv[a].    value);
+        printf("Key: %s und Value: %s", sm[a].key, sm[a].value);
         return 0;
      }
     }
@@ -66,17 +66,17 @@ int put(char *key, char *value, char *res) {
 * IDEE: array_length-Variable anlegen, -1 beim Löschen
 *******/
 
-int del(char *key, char *res) {
+int del(char *key, char *res, struct daten *sm) {
   if(current_length == 0){
                  strcpy(res, "Es sind keine Daten vorhanden!");
                  printf("Keine Daten vorhanden");
                  return -1;
          } else {
                  for(a = 0; a < LENGTH; a++){
-                  if(strncmp(kv[a].key, key, 1)==0){
-                         strcpy(res, kv[a].value);
-                         strcpy(kv[a].key, NULL);
-                         strcpy(kv[a].value, NULL);
+                  if(strncmp(sm[a].key, key, 1)==0){
+                         strcpy(res, sm[a].value);
+                         strcpy(sm[a].key, NULL);
+                         strcpy(sm[a].value, NULL);
                          return 0;
                   }
                  }

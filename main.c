@@ -28,9 +28,9 @@ int main(){
 	char *res;
   int var;
   int read_size;
-  /* int pid, i, id, y;
-  struct daten *sm[LENGTH];
-  */
+  int pid, i, id, y;
+  struct daten *sm;
+
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
   if (sock < 0){
@@ -52,15 +52,12 @@ int main(){
     if(listen(sock, 5) < 0){
       printf("Error on listening");
     };
-    /* id = shmget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
-    for(y = 0; y < LENGTH; y++){
-     sm[y] = (struct daten *) shmat (id, 0, 0);
-    }
-    */
+    id = shmget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
+    sm = (struct daten *) shmat (id, 0, 0);
 
       while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
-				/* pid = fork();
+				 pid = fork();
           if(pid < 0){
           printf("Fehler!\n");
           exit(1);
@@ -71,7 +68,7 @@ int main(){
         //Kindprozess
         close(sock);
 
-        */
+
 				char greet[12] = "Hallo Client";
         write (fileDescriptor, greet, strlen(greet));
 
@@ -95,7 +92,7 @@ int main(){
 		       write(fileDescriptor, out, strlen(out));
 	        }
 	        close(fileDescriptor);
-        //}
+        }
       }
 	return 0;
 }
