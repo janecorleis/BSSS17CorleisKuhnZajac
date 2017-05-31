@@ -40,9 +40,6 @@ int main() {
 	    exit(1);
     }
 
-    int option = 1;
-    setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const void *) &option, sizeof(int));
-
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(1337);
@@ -76,17 +73,37 @@ int main() {
 
 	        while (read_size = recv(fileDescriptor, in, 2000,0) > 0) {
 				strtoken(in, seperator, token, 3);
+
                 if(strcmp(token[0], "PUT") == 0) {
                     var = put(token[1], token[2], res, sm);
-                    puts("PUT funktioniert\n");
+                    //puts("PUT funktioniert\n");
+                    if (var == 0) {
+                        puts("PUT wurde ausgeführt\n")
+                    } else {
+                        puts("Konnte nicht ausgeführt werden")
+                    }
+
                 } else if (strcmp(token[0], "GET") == 0) {
                     var = get(token[1], res, sm);
-                    puts("GET funktioniert\n");
+                    //puts("GET funktioniert\n");
+                    if (var == 0) {
+                        puts("GET wurde ausgeführt\n")
+                    } else {
+                        puts("Konnte nicht ausgeführt werden")
+                    }
+
                 } else if (strcmp (token[0], "DEL") == 0) {
                     var = del(token[1], res, sm);
-                    puts("DEL funktioniert\n");
+                    //puts("DEL funktioniert\n");
+                    if (var == 0) {
+                        puts("DEL wurde ausgeführt\n")
+                    } else {
+                        puts("Konnte nicht ausgeführt werden")
+                    }
+
                 } else {
                     puts("Ungültige Eingabe vom Client\n");
+
                 }
             bzero(in, sizeof(in));
             bzero((char *) &res, sizeof((char *) &res));
