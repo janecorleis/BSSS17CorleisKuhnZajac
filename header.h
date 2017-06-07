@@ -6,7 +6,7 @@
 struct daten {
 	char key[LENGTH];
 	char value[LENGTH];
-} ;
+};
 struct daten kv[LENGTH];
 
 extern int put(char *key, char* value, char* res, struct daten *sm);
