@@ -26,7 +26,6 @@ int get(char *key, char *res, struct daten *sm) {
       strcpy(res, "Wert nicht gefunden!");
       printf("Wert nicht gefunden!\n");
       return -1;
-
 }
 
 /*****
@@ -47,7 +46,7 @@ int put(char *key, char *value, char *res, struct daten *sm) {
         strcpy(sm[a].value, value);
         printf("\nValue wurde ersetzt");
         return 0;
-     }else if(strcmp(sm[a].key, NULL) == 0){
+     } else if(strcmp(sm[a].key, NULL) == 0){
         strcpy(sm[a].key, key);
         strcpy(sm[a].value, value);
         strcpy(res, value);

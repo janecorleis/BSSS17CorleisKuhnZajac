@@ -28,8 +28,9 @@ int main(){
 	char *res;
   int var;
   int read_size;
-  int pid, i, id, y;
+  int pid, i, id, y, id2;
   struct daten *sm;
+  struct sembuf sem_up;
 
 
   sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -52,8 +53,14 @@ int main(){
     if(listen(sock, 5) < 0){
       printf("Error on listening");
     };
+
     id = shmget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
     sm = (struct daten *) shmat (id, 0, 0);
+
+    id2 = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
+    if(id2 == -1){
+      printf("Semaphorengruppe konnte nicht erzeugt werden\n");
+    }
 
       while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
