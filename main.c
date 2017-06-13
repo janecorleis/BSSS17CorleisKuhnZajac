@@ -28,7 +28,7 @@ int main(){
 	char *res;
     int var;
     int read_size;
-    int pid, i, id, y, id2;
+    int pid, i, id, y, db, mutex, rc;
     struct daten *sm;
     struct sembuf up, down;
 
@@ -65,7 +65,14 @@ int main(){
       return -1;
     }
 
+    id3 = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
+    if(id3 == -1){
+      printf("Semaphorengruppe konnte nicht erzeugt werden\n");
+      return -1;
+    }
+
     semctl(id2, 0, SETALL, (int) 1);
+    semctl(id3, 0, SETALL, (int) 1);
 
     down.sem_num = 0;
     down.sem_op = -1;
@@ -96,21 +103,27 @@ int main(){
 			    strtoken(in, seperator, token, 3);
 
                 if(strcmp(token[0], "PUT") == 0){
-                    semop(id2, &down, 1);
+                    semop(db, &down, 1);
                     var = put(token[1], token[2], res, sm);
                     puts("PUT funktioniert\n");
                     sleep(5000);
-                    semop(id2, &up, 1);
+                    semop(db, &up, 1);
                 } else if (strcmp(token[0], "GET") == 0){
-                    semop(id2, &down, 1);
+                    semop(mutex, &down, 1);
+                    rc = rc + 1;
+                    if(rc == 1) semop(db, &down, 1);
+                    semop(mutex, &up, 1);
                     var = get(token[1], res, sm);
                     puts("GET funktioniert\n");
-                    semop(id2, &up, 1);
+                    semop(mutex, &down, 1);
+                    rc = rc - 1;
+                    if(rc == 0) semop(db, &up, 1);
+                    semop(mutex, &up, 1);
                 } else if (strcmp (token[0], "DEL") == 0){
-                    semop(id2, &down, 1);
+                    semop(db, &down, 1);
                     var = del(token[1], res, sm);
                     puts("DEL funktioniert\n");
-                    semop(id2, &up, 1);
+                    semop(db, &up, 1);
                 } else {
                     puts("Ungültige Eingabe vom Client\n");
                 }
