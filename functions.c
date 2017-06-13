@@ -23,15 +23,9 @@ int get(char *key, char *res, struct daten *sm) {
             }
         }
     }
-<<<<<<< HEAD
-      strcpy(res, "Wert nicht gefunden!");
-      printf("Wert nicht gefunden!\n");
-      return -1;
-=======
     strcpy(res, "Wert nicht gefunden!");
     printf("Wert nicht gefunden!\n");
     return -1;
->>>>>>> 4dcf30cce4590ec11cb29e9725d75c1bd430a624
 }
 
 /*****
@@ -43,25 +37,7 @@ int get(char *key, char *res, struct daten *sm) {
 
 int put(char *key, char *value, char *res, struct daten *sm) {
    for(a = 0; a < LENGTH; a++) {
-<<<<<<< HEAD
-     if(current_length == LENGTH){
-        strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
-        printf("\nEs koennen keine Daten hinzugefuegt werden!\n");
-        return -1;
-     } else if(strcmp(sm[a].key, key)== 0){
-        strcpy(res, sm[a].value);
-        strcpy(sm[a].value, value);
-        printf("\nValue wurde ersetzt");
-        return 0;
-     } else if(strcmp(sm[a].key, NULL) == 0){
-        strcpy(sm[a].key, key);
-        strcpy(sm[a].value, value);
-        strcpy(res, value);
-        current_length++;
-        printf("Key: %s und Value: %s", sm[a].key, sm[a].value);
-        return 0;
-     }
-=======
+
        if(current_length == LENGTH) {
            strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
            printf("\nEs koennen keine Daten hinzugefuegt werden!\n");
@@ -79,7 +55,7 @@ int put(char *key, char *value, char *res, struct daten *sm) {
             printf("Key: %s und Value: %s", sm[a].key, sm[a].value);
             return 0;
         }
->>>>>>> 4dcf30cce4590ec11cb29e9725d75c1bd430a624
+
     }
 }
 
