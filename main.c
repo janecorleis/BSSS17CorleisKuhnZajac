@@ -15,29 +15,29 @@ void bzero(void *to, size_t count) {
 }
 int main(){
 
-  int sock;
-  struct sockaddr_in server;
-  struct sockaddr_in client;
-  int fileDescriptor;
-  unsigned long client_len;
-  client_len = sizeof(client);
-  char in[2000];
-  char out[2000];
-	char seperator = " ";
+    int sock;
+    struct sockaddr_in server;
+    struct sockaddr_in client;
+    int fileDescriptor;
+    unsigned long client_len;
+    client_len = sizeof(client);
+    char in[2000];
+    char out[2000];
+    char seperator = " ";
 	char *token[256];
 	char *res;
-  int var;
-  int read_size;
-  int pid, i, id, y, id2;
-  struct daten *sm;
-  struct sembuf up, down;
+    int var;
+    int read_size;
+    int pid, i, id, y, id2;
+    struct daten *sm;
+    struct sembuf up, down;
 
 
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (sock < 0){
-	   perror("creating stream socket");
-	   exit(1);
-  }
+    sock = socket(AF_INET, SOCK_STREAM, 0);
+    if (sock < 0){
+        perror("creating stream socket");
+	    exit(1);
+    }
 
     int option = 1;
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const void *) &option, sizeof(int));
@@ -75,49 +75,49 @@ int main(){
     up.sem_op = 1;
     up.sem_flg = SEM_UNDO;
 
-      while (1){
+    while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
-				 pid = fork();
-          if(pid < 0){
-          printf("Fehler!\n");
-          exit(1);
-        } else if(pid > 0){
-         //Vaterprozess
-         close(fildeDescriptor);
-       } else if(pid == 0){
-        //Kindprozess
-        close(sock);
+           pid = fork();
+           if(pid < 0){
+               printf("Fehler!\n");
+               exit(1);
+            } else if(pid > 0){
+                //Vaterprozess
+                close(fildeDescriptor);
+            } else if(pid == 0){
+                //Kindprozess
+                close(sock);
 
 
-				char greet[12] = "Hallo Client";
-        write (fileDescriptor, greet, strlen(greet));
+			    char greet[12] = "Hallo Client";
+                write (fileDescriptor, greet, strlen(greet));
 
-	       while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
-					  strtoken(in, seperator, token, 3);
+	            while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
+			    strtoken(in, seperator, token, 3);
 
-            if(strcmp(token[0], "PUT") == 0){
-              semop(id2, &down, 1);
-              var = put(token[1], token[2], res, sm);
-              puts("PUT funktioniert\n");
-              sleep(5000);
-              semop(id2, &up, 1);
-            } else if (strcmp(token[0], "GET") == 0){
-              semop(id2, &down, 1);
-              var = get(token[1], res, sm);
-              puts("GET funktioniert\n");
-              semop(id2, &up, 1);
-            } else if (strcmp (token[0], "DEL") == 0){
-              semop(id2, &down, 1);
-              var = del(token[1], res, sm);
-              puts("DEL funktioniert\n");
-              semop(id2, &up, 1);
-            } else {
-              puts("Ungültige Eingabe vom Client\n");
-            }
+                if(strcmp(token[0], "PUT") == 0){
+                    semop(id2, &down, 1);
+                    var = put(token[1], token[2], res, sm);
+                    puts("PUT funktioniert\n");
+                    sleep(5000);
+                    semop(id2, &up, 1);
+                } else if (strcmp(token[0], "GET") == 0){
+                    semop(id2, &down, 1);
+                    var = get(token[1], res, sm);
+                    puts("GET funktioniert\n");
+                    semop(id2, &up, 1);
+                } else if (strcmp (token[0], "DEL") == 0){
+                    semop(id2, &down, 1);
+                    var = del(token[1], res, sm);
+                    puts("DEL funktioniert\n");
+                    semop(id2, &up, 1);
+                } else {
+                    puts("Ungültige Eingabe vom Client\n");
+                }
 
-            bzero(in, sizeof(in));
-            bzero((char *) &res, sizeof((char *) &res));
-		    write(fileDescriptor, out, strlen(out));
+                bzero(in, sizeof(in));
+                bzero((char *) &res, sizeof((char *) &res));
+		        write(fileDescriptor, out, strlen(out));
 	        }
 
 	        close(fileDescriptor);
