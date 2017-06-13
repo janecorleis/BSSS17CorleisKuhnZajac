@@ -9,6 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
+//muss #include <sys/sem.h> nicht rein? Wäre ja die Headerfile für Semaphoren
 
 void bzero(void *to, size_t count) {
     memset(to, 0, count);
@@ -71,8 +72,8 @@ int main(){
       return -1;
     }
 
-    semctl(id2, 0, SETALL, (int) 1);
-    semctl(id3, 0, SETALL, (int) 1);
+    semctl(id2, 0, SETALL, (int) 1); // muss hier nicht der Rückgabewert abgefangen werden?
+    semctl(id3, 0, SETALL, (int) 1); // und muss es nicht (id3, 1, SETALL, (int) 1); sein? Also muss man als Anzahl der Semaphoren in der Gruppe nicht 1 übergeben?
 
     down.sem_num = 0;
     down.sem_op = -1;
@@ -103,7 +104,7 @@ int main(){
 			    strtoken(in, seperator, token, 3);
 
                 if(strcmp(token[0], "PUT") == 0){
-                    semop(db, &down, 1);
+                    semop(db, &down, 1); // db müsste doch die ID sein? Die ist oben deklariert, aber tatsächlich arbeiten wir ja mit id2 und id3? und müsste nicht auch der Rückgabewert abgefangen werden?
                     var = put(token[1], token[2], res, sm);
                     puts("PUT funktioniert\n");
                     sleep(5000);
