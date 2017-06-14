@@ -60,20 +60,20 @@ int main(){
     sm = (struct daten *) shmat (id, 0, 0);
 
 
-    id2 = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
-    if(id2 == -1){
+    db = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
+    if(db == -1){
       printf("Semaphorengruppe konnte nicht erzeugt werden\n");
       return -1;
     }
 
-    id3 = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
-    if(id3 == -1){
+    mutex = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
+    if(mutex == -1){
       printf("Semaphorengruppe konnte nicht erzeugt werden\n");
       return -1;
     }
 
-    semctl(id2, 0, SETALL, (int) 1); // muss hier nicht der Rückgabewert abgefangen werden?
-    semctl(id3, 0, SETALL, (int) 1); // und muss es nicht (id3, 1, SETALL, (int) 1); sein? Also muss man als Anzahl der Semaphoren in der Gruppe nicht 1 übergeben?
+    semctl(db, 0, SETALL, (int) 1);
+    semctl(mutex, 0, SETALL, (int) 1); // und muss es nicht (id3, 1, SETALL, (int) 1); sein? Also muss man als Anzahl der Semaphoren in der Gruppe nicht 1 übergeben?
 
     down.sem_num = 0;
     down.sem_op = -1;
@@ -104,7 +104,7 @@ int main(){
 			    strtoken(in, seperator, token, 3);
 
                 if(strcmp(token[0], "PUT") == 0){
-                    semop(db, &down, 1); // db müsste doch die ID sein? Die ist oben deklariert, aber tatsächlich arbeiten wir ja mit id2 und id3? und müsste nicht auch der Rückgabewert abgefangen werden?
+                    semop(db, &down, 1);
                     var = put(token[1], token[2], res, sm);
                     puts("PUT funktioniert\n");
                     sleep(5000);
