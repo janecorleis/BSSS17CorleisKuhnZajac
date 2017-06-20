@@ -1,6 +1,7 @@
 ﻿#include <stdio.h>
 #include "functions.h"
 #include <string.h>
+#include <stdbool.h>
 
 int current_length = 0;
 int a;
@@ -11,7 +12,8 @@ int a;
 * wird durch einen Rückgabewert darauf aufmerksam gemacht.
 * ****/
 
-int get(char *key, char *res, struct daten *sm) {
+int get(char *key, char *res, struct daten *sm, char *array) {
+    int e = 0;
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
@@ -20,6 +22,13 @@ int get(char *key, char *res, struct daten *sm) {
             if(strcmp(sm[a].key, key) == 0) {
                 strcpy(res, sm[a].value);
                 return 0;
+            } else {
+              if(wildCard(key, sm[a].key, 0, 0)){
+                array[e] = sm[a].value;
+                printf("%s\n", array[e]);
+                e++;
+              }
+
             }
         }
     }
@@ -85,6 +94,29 @@ int del(char *key, char *res, struct daten *sm) {
     printf("Nichts gefunden");
     return -1;
 
+}
+
+bool wildCard(const char *pattern, const char *candidate, int p, int c) {
+  if (pattern[p] == '\0') {
+      printf("1: %i %i\n", c, p);
+    return candidate[c] == '\0';
+
+  } else if (pattern[p] == '*') {
+     printf("2: %i %i\n", c, p);
+    for (; candidate[c] != '\0'; c++) {
+       printf("hallo %i\n", c);
+      if (wildCard(pattern, candidate, p+1, c)){
+     printf("3: %i %i\n", c, p);
+        return true;
+        }
+    }
+    return wildCard(pattern, candidate, p+1, c);
+  } else if (pattern[p] != '?' && pattern[p] != candidate[c]) {
+    return false;
+  }  else {
+      printf("4: %i %i\n", c, p);
+    return wildCard(pattern, candidate, p+1, c+1);
+  }
 }
 
 int strtoken(char *str, char *separator, char **token, int size) {
