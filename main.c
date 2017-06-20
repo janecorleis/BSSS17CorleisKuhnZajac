@@ -9,7 +9,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/wait.h>
-//muss #include <sys/sem.h> nicht rein? Wäre ja die Headerfile für Semaphoren
+#include <sys/sem.h>
 
 void bzero(void *to, size_t count) {
     memset(to, 0, count);
@@ -66,19 +66,7 @@ int main(){
       return -1;
     }
 
-<<<<<<< HEAD
-
     semctl(id2, 0, SETALL, (int) 1);
-=======
-    mutex = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
-    if(mutex == -1){
-      printf("Semaphorengruppe konnte nicht erzeugt werden\n");
-      return -1;
-    }
-
-    semctl(db, 0, SETALL, (int) 1);
-    semctl(mutex, 0, SETALL, (int) 1); // und muss es nicht (id3, 1, SETALL, (int) 1); sein? Also muss man als Anzahl der Semaphoren in der Gruppe nicht 1 übergeben?
->>>>>>> 3014d6a0e3c97efd53a54db2d0765f6474daa9c3
 
     down.sem_num = 0;
     down.sem_op = -1;
