@@ -61,12 +61,6 @@ int main(){
     sm = (struct daten *) shmat (id, 0, 0);
 
 
-    db = semget(IPC_PRIVATE, 1, IPC_CREAT | 0777);
-    if(db == -1){
-      printf("Semaphorengruppe konnte nicht erzeugt werden\n");
-      return -1;
-    }
-
     semctl(id2, 0, SETALL, (int) 1);
 
     down.sem_num = 0;
