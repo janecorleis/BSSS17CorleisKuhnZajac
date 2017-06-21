@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include "functions.h"
 #include <string.h>
 #include <stdbool.h>
@@ -23,10 +23,10 @@ int get(char *key, char *res, struct daten *sm, char *array) {
                 strcpy(res, sm[a].value);
                 return 0;
             } else {
-              if(wildCard(key, sm[a].key, 0, 0)){
-                array[e] = sm[a].value;
-                printf("%s\n", array[e]);
-                e++;
+                if(wildCard(key, sm[a].key, 0, 0)){
+                    array[e] = sm[a].value;
+                    printf("%s\n", array[e]);
+                    e++;
               }
 
             }
@@ -97,25 +97,26 @@ int del(char *key, char *res, struct daten *sm) {
 }
 
 bool wildCard(const char *pattern, const char *candidate, int p, int c) {
-  if (pattern[p] == '\0') {
-      printf("1: %i %i\n", c, p);
-    return candidate[c] == '\0';
-
-  } else if (pattern[p] == '*') {
-     printf("2: %i %i\n", c, p);
-    for (; candidate[c] != '\0'; c++) {
-       printf("hallo %i\n", c);
-      if (wildCard(pattern, candidate, p+1, c)){
-     printf("3: %i %i\n", c, p);
-        return true;
+    if (pattern[p] == '\0') {
+        //printf("1: %i %i\n", c, p);
+        return candidate[c] == '\0';
+    } else if (pattern[p] == '*') {
+        //printf("2: %i %i\n", c, p);
+        for (; candidate[c] != '\0'; c++) {
+            //printf("hallo %i\n", c);
+            if (wildCard(pattern, candidate, p+1, c)){
+                printf("3: %i %i\n", c, p);
+                return true;
         }
     }
     return wildCard(pattern, candidate, p+1, c);
-  } else if (pattern[p] != '?' && pattern[p] != candidate[c]) {
-    return false;
-  }  else {
-      printf("4: %i %i\n", c, p);
-    return wildCard(pattern, candidate, p+1, c+1);
+    } else if (pattern[p] == '?') {
+        return wildCard(pattern, candidate, p+1, c+1);
+    } else if (pattern[p] != candidate[c]) {
+        return false;
+    } else {
+        printf("4: %i %i\n", c, p);
+        return wildCard(pattern, candidate, p+1, c+1);
   }
 }
 
