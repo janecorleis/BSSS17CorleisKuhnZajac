@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stdbool.h>
 
-int current_length = 0;
 int a;
 
 /*****
@@ -12,15 +11,15 @@ int a;
 * wird durch einen Rückgabewert darauf aufmerksam gemacht.
 * ****/
 
-int get(char *key, char *res, struct daten *sm, char *array[]) {
+int get(char *key, char *res, struct datenWrapper *sm, char *array) {
     int e = 0;
-    if (current_length == 0) {
+    if (sm->current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
     } else {
-        for(a = 0; a < LENGTH; a++) {
-            if(strcmp(sm[a].key, key) == 0) {
-                strcpy(res, sm[a].value);
+        for(a = 0; a < sm->current_length; a++) {
+            if(strcmp(sm->entry[a].key, key) == 0) {
+                strcpy(res, sm->entry[a].value);
                 return 0;
             }
         }
@@ -37,26 +36,26 @@ int get(char *key, char *res, struct daten *sm, char *array[]) {
 * IDEE: array_length-Variable anlegen, aufzählen beim Hinzufügen. Falls Array voll -> Error
 *******/
 
-int put(char *key, char *value, char *res, struct daten *sm) {
+int put(char *key, char *value, char *res, struct datenWrapper *sm) {
    for(a = 0; a < LENGTH; a++) {
-
-       if(current_length == LENGTH) {
+       if(sm->current_length == LENGTH) {
            strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
            printf("\nEs koennen keine Daten hinzugefuegt werden!\n");
            return -1;
-        } else if(strcmp(sm[a].key, key) == 0) {
-            strcpy(res, sm[a].value);
-            strcpy(sm[a].value, value);
+        } else if(strcmp(sm->entry[a].key, key) == 0) {
+            strcpy(res, sm->entry[a].value);
+            strcpy(sm->entry[a].value, value);
             printf("\nValue wurde ersetzt");
             return 0;
-        } else if(strcmp(sm[a].key, NULL) == 0) {
-            strcpy(sm[a].key, key);
-            strcpy(sm[a].value, value);
-            strcpy(res, value);
-            current_length++;
-            printf("Key: %s und Value: %s", sm[a].key, sm[a].value);
-            return 0;
-        }
+        } else if(strlen(sm->entry[a].key) == 0) {
+           strcpy(sm->entry[a].key, key);
+           strcpy(sm->entry[a].value, value);
+           strcpy(res, value);
+           sm[0].current_length++;
+           printf("Key: %s und Value: %s", sm->entry[a].key, sm->entry[a].value);fflush(0);
+           return 0;
+       }
+       printf("%s \n", sm->entry[a].key);
 
     }
 }
@@ -68,17 +67,17 @@ int put(char *key, char *value, char *res, struct daten *sm) {
 * IDEE: array_length-Variable anlegen, -1 beim Löschen
 *******/
 
-int del(char *key, char *res, struct daten *sm) {
-    if(current_length == 0) {
+int del(char *key, char *res, struct datenWrapper *sm) {
+    if(sm->current_length == 0) {
         strcpy(res, "Es sind keine Daten vorhanden!");
         printf("Keine Daten vorhanden");
         return -1;
     } else {
         for(a = 0; a < LENGTH; a++) {
-            if(strncmp(sm[a].key, key, 1) == 0) {
-                strcpy(res, sm[a].value);
-                strcpy(sm[a].key, NULL);
-                strcpy(sm[a].value, NULL);
+            if(strncmp(sm->entry[a].key, key, 1) == 0) {
+                strcpy(res, sm->entry[a].value);
+                strcpy(sm->entry[a].key, NULL);
+                strcpy(sm->entry[a].value, NULL);
                 return 0;
             }
         }
