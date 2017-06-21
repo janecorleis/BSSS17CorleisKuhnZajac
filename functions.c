@@ -12,7 +12,7 @@ int a;
 * wird durch einen Rückgabewert darauf aufmerksam gemacht.
 * ****/
 
-int get(char *key, char *res, struct daten *sm, char *array) {
+int get(char *key, char *res, struct daten *sm, char array[][DIM]) {
     int e = 0;
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");

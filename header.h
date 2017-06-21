@@ -2,6 +2,7 @@
 #define FUNCTIONS_H
 
 #define LENGTH 32
+#define DIM 255
 #include <stdbool.h>
 
 struct daten {

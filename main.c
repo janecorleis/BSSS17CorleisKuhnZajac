@@ -31,7 +31,7 @@ int main(){
     int read_size;
     int pid, i, id, y, id2;
     struct daten *sm;
-    char *array;
+    char array[LENGTH][DIM];
     struct sembuf up, down;
 
 
@@ -105,7 +105,7 @@ int main(){
                     semop(id2, &up, 1);
                 } else if (strcmp(token[0], "GET") == 0){
                     semop(id2, &down, 1);
-                    var = get(token[1], (char*) &res, sm, (char*) &array);
+                    var = get(token[1], (char*) &res, sm, array);
                     puts("GET funktioniert\n");
                     semop(id2, &down, 1);
                 } else if (strcmp (token[0], "DEL") == 0){
