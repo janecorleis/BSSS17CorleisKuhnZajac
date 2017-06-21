@@ -45,6 +45,7 @@ int main(){
     setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (const void *) &option, sizeof(int));
 
 
+
     server.sin_family = AF_INET;
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(1337);
@@ -60,6 +61,11 @@ int main(){
     id = shmget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
     sm = (struct daten *) shmat (id, 0, 0);
 
+    id2 = semget(IPC_PRIVATE, sizeof(struct daten), IPC_CREAT|0777);
+    if(id2==1){
+      printf("geht nicht");
+      return -1;
+    }
 
     semctl(id2, 0, SETALL, (int) 1);
 
@@ -79,7 +85,7 @@ int main(){
                exit(1);
             } else if(pid > 0){
                 //Vaterprozess
-                close(fildeDescriptor);
+                close(fileDescriptor);
             } else if(pid == 0){
                 //Kindprozess
                 close(sock);
