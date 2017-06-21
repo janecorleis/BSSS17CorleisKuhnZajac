@@ -12,7 +12,7 @@ int a;
 * wird durch einen Rückgabewert darauf aufmerksam gemacht.
 * ****/
 
-int get(char *key, char *res, struct daten *sm, char array[][DIM]) {
+int get(char *key, char *res, struct daten *sm, char *array[]) {
     int e = 0;
     if (current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
@@ -22,13 +22,6 @@ int get(char *key, char *res, struct daten *sm, char array[][DIM]) {
             if(strcmp(sm[a].key, key) == 0) {
                 strcpy(res, sm[a].value);
                 return 0;
-            } else {
-                if(wildCard(key, sm[a].key, 0, 0)){
-                    array[e] = sm[a].value;
-                    printf("%s\n", array[e]);
-                    e++;
-              }
-
             }
         }
     }

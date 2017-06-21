@@ -45,7 +45,7 @@ int main(int argc, char *argv[]) {
 	/* Nach Nachricht vom User fragen, diese wird vom Server gelesen */
 	printf("Please enter message: ");
 	bzero(buffer, 256);
-	fgets(buffer, 255, stdin)
+	fgets(buffer, 255, stdin);
 
 	/* Nachricht an Server senden */
 	n = write(sockfd, buffer, strlen(buffer));
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
 	printf("%s\n", buffer);
 	return 0;
 }
-	/*read input from stdin*/
+	/* read input from stdin */
 	/*while(run=read(0,buf,BUF_SIZE)) {
 		if(run<0) {
 			perror(“error reading from stdin”);
