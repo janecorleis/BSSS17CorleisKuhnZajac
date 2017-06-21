@@ -105,7 +105,7 @@ bool wildCard(const char *pattern, const char *candidate, int p, int c) {
         for (; candidate[c] != '\0'; c++) {
             //printf("hallo %i\n", c);
             if (wildCard(pattern, candidate, p+1, c)){
-                printf("3: %i %i\n", c, p);
+                //printf("3: %i %i\n", c, p);
                 return true;
         }
     }
@@ -115,7 +115,7 @@ bool wildCard(const char *pattern, const char *candidate, int p, int c) {
     } else if (pattern[p] != candidate[c]) {
         return false;
     } else {
-        printf("4: %i %i\n", c, p);
+        //printf("4: %i %i\n", c, p);
         return wildCard(pattern, candidate, p+1, c+1);
   }
 }
