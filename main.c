@@ -130,11 +130,13 @@ int main(){
                     var = del(token[1], res, sm);
                     puts("DEL funktioniert\n");
                     semop(id2, &up, 1);
+                }else if(strcmp(token[0], "close") == 0){
+                    shutdown(fileDescriptor, 2);
                 } else {
                     puts("Ungültige Eingabe vom Client\n");
                 }
 
-                bzero(in, sizeof(in));
+            bzero(in, sizeof(in));
 		        write(fileDescriptor, res, strlen(res));
 	        }
 
