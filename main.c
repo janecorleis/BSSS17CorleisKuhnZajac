@@ -13,7 +13,7 @@
 #include <memory.h>
 #include "signal.h"
 
-int pid, i, id, y, id2;
+int pid, id, id2, id3;
 
 void bzero(void *to, size_t count) {
     memset(to, 0, count);
@@ -41,13 +41,13 @@ int main(){
     char in[2000];
     char out[2000];
     char *seperator = " ";
-	char *token[256];
-	char res[2000];
-    int var;
+	  char *token[256];
+	  char res[2000];
+    int var, i;
     int read_size;
     struct datenWrapper *sm;
     char *array[LENGTH];
-    struct sembuf up, down;
+    struct sembuf up, down, upc, downc;
 
     //Here we bind the signals to our handler function
     signal(SIGINT, handler);
@@ -83,6 +83,7 @@ int main(){
       printf("geht nicht");
       return -1;
     }
+    sm->counter = 0;
 
     semctl(id2, 0, SETVAL, (int) 1);
 
@@ -93,6 +94,22 @@ int main(){
     up.sem_num = 0;
     up.sem_op = 1;
     up.sem_flg = SEM_UNDO;
+
+    id3 = semget(IPC_PRIVATE, 1, IPC_CREAT|0777);
+    if(id3==1){
+      printf("geht nicht");
+      return -1;
+    }
+
+    semctl(id3, 0, SETVAL, (int) 1);
+
+    downc.sem_num = 0;
+    downc.sem_op = -1;
+    downc.sem_flg = SEM_UNDO;
+
+    upc.sem_num = 0;
+    upc.sem_op = 1;
+    upc.sem_flg = SEM_UNDO;
 
     while (1){
 	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
@@ -121,13 +138,29 @@ int main(){
                     //sleep(5);
                     semop(id2, &up, 1);
                 } else if (strcmp(token[0], "GET") == 0){
-                    semop(id2, &down, 1);
+                    semop(id3, &downc, 1);
+                    sm->counter += 1;
+                    if(sm->counter == 1){
+                      semop(id2, &down, 1);
+                    }
+                    semop(id3, &upc, 1);
                     var = get(token[1], res, sm, array);
+                    if(var > 0){
+                      for(i = 0; i < var; i++){
+                        write(fileDescriptor, array[i], strlen(array[i]));
+                        array[i] = NULL;
+                      }
+                    }
+                    semop(id3, &downc, 1);
+                    sm->counter -= 1;
+                    if(sm->counter == 0){
+                      semop(id2, &up, 1);
+                    }
                     puts("GET funktioniert\n");
-                    semop(id2, &up, 1);
+                    semop(id3, &upc, 1);
                 } else if (strcmp (token[0], "DEL") == 0){
                     semop(id2, &down, 1);
-                    var = del(token[1], res, sm);
+                    var = del(token[1], res, sm, array);
                     puts("DEL funktioniert\n");
                     semop(id2, &up, 1);
                 }else if(strcmp(token[0], "close") == 0){

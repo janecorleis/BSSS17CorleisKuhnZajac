@@ -13,6 +13,7 @@ int a;
 
 int get(char *key, char *res, struct datenWrapper *sm, char **array) {
     int e = 0;
+    int check = 0;
     if (sm->current_length == 0) {
         printf("Es sind keine Daten gespeichert.\n");
         return -1;
@@ -27,13 +28,17 @@ int get(char *key, char *res, struct datenWrapper *sm, char **array) {
       if(wildCard(key, sm->entry[a].key, 0, 0)){
         array[e] = sm->entry[a].value;
         printf("%s\n", array[e]);
+        check += 1;
         e++;
       }
     }
-    
-    strcpy(res, "Wert nicht gefunden!");
-    printf("Wert nicht gefunden!\n");
-    return -1;
+    if(check == 0){
+      strcpy(res, "Wert nicht gefunden!");
+      printf("Wert nicht gefunden!\n");
+      return -1;
+    }
+    return check;
+
 }
 
 /*****
@@ -44,6 +49,7 @@ int get(char *key, char *res, struct datenWrapper *sm, char **array) {
 *******/
 
 int put(char *key, char *value, char *res, struct datenWrapper *sm) {
+
   if(sm->current_length == LENGTH) {
     strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
     printf("\nEs koennen keine Daten hinzugefuegt werden!\n");
@@ -65,7 +71,7 @@ int put(char *key, char *value, char *res, struct datenWrapper *sm) {
       strcpy(sm->entry[a].value, value);
       strcpy(res, value);
       sm->current_length++;
-      printf("Key: %s und Value: %s", sm->entry[a].key, sm->entry[a].value);fflush(0);
+      printf("Key: %s und Value: %s", sm->entry[a].key, sm->entry[a].value); fflush(0);
       return 0;
     }
 	}
@@ -79,25 +85,37 @@ int put(char *key, char *value, char *res, struct datenWrapper *sm) {
 * IDEE: array_length-Variable anlegen, -1 beim Löschen
 *******/
 
-int del(char *key, char *res, struct datenWrapper *sm) {
+int del(char *key, char *res, struct datenWrapper *sm, char **array) {
+    int var = 0;
     if(sm->current_length == 0) {
         strcpy(res, "Es sind keine Daten vorhanden!");
         printf("Keine Daten vorhanden");
         return -1;
-    } else {
-        for(a = 0; a < LENGTH; a++) {
-            if(strncmp(sm->entry[a].key, key, 1) == 0) {
-                strcpy(res, sm->entry[a].value);
-                strcpy(sm->entry[a].key, NULL);
-                strcpy(sm->entry[a].value, NULL);
-                return 0;
-            }
+    }
+    for(a = 0; a < LENGTH; a++) {
+        if(strncmp(sm->entry[a].key, key, 1) == 0) {
+            strcpy(res, sm->entry[a].value);
+            strcpy(sm->entry[a].key, NULL);
+            strcpy(sm->entry[a].value, NULL);
+            return 0;
         }
     }
-    strcpy(res, "Keinen passenden Wert gefunden!");
-    printf("Nichts gefunden");
-    return -1;
 
+    for(a = 0; a < sm->current_length; a++) {
+      if(wildCard(key, sm->entry[a].key, 0, 0)){
+        strcmp(sm->entry[a].key, NULL);
+        strcmp(sm->entry[a].value, NULL);
+        var += 1;
+      }
+    }
+
+    if(var == 0){
+      strcpy(res, "Keinen passenden Wert gefunden!");
+      printf("Nichts gefunden");
+      return -1;
+    }
+
+    return var;
 }
 
 bool wildCard(const char *pattern, const char *candidate, int p, int c) {
