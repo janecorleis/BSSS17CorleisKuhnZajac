@@ -10,10 +10,10 @@ int main(int argc, char *argv[]) {
 	int sockfd, n;
 	char buffer[256];
 
-	/*if(argc != 2) {
+	if(argc != 2) {
 		fprinf(stderr, "usage: client <hostname>\n");
 		exit(2);
-	}*/
+	}
 
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
