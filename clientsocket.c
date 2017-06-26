@@ -3,6 +3,9 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <unistd.h>
+
+#define PORT 1337
 
 int main(int argc, char *argv[]) {
 	struct sockaddr_in server;
@@ -22,19 +25,21 @@ int main(int argc, char *argv[]) {
 		exit(1);
 	}
 
+	server.sin_family = AF_INET;
+
 	host_info = gethostbyname(argv[1]);
 
-	if (server == NULL) {
+	if (host_info == NULL) {
 		fprintf(stderr,"ERROR, no such host\n");
 		exit(0);
   }
 
 	bzero((char *) &serv_addr, sizeof(serv_addr));
-	server.sin_family = AF_INET;
+
 	memcpy(&server.sin_addr. host_info->h.addr. host_info->h_length);
 	/* copies internet address to server address */
 	//bcopy(hp->h_addr, &server.sin_addr, hp->h_length);
-	server.sin_port = htons(1344);
+	server.sin_port = htons(PORT);
 
 	/* Mit Server verbinden */
 	if(connect(sockfd, (struct sockadrr*) &server, sizeof(server)) < 0) {

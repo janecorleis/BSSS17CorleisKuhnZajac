@@ -112,7 +112,7 @@ int main(){
     upc.sem_flg = SEM_UNDO;
 
     while (1){
-	       fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
+	      fileDescriptor = accept(sock, (struct sockaddr *) &client, &client_len);
         printf("Connection accepeted\n"); fflush(0);
            pid = fork();
            if(pid < 0){
