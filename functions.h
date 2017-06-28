@@ -4,7 +4,6 @@
 #define LENGTH 32
 #define DIM 255
 
-
 struct daten {
 	char key[LENGTH];
 	char value[LENGTH];

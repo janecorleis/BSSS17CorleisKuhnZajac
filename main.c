@@ -145,12 +145,16 @@ int main(){
                       }
                       semop(id3, &upc, 1);
                       var = get(token[1], res, sm, array);
+
+                      //Ausgabe falls Array durch WildCards gefüllt ist
                       if(var > 0){
                         for(i = 0; i < var; i++){
                           write(fileDescriptor, array[i], strlen(array[i]));
                           array[i] = NULL;
                         }
                       }
+
+                      //Ausgabe falls nur ein Value ausgegeben werden soll
                       if(var == 0) write(fileDescriptor, res, strlen(res));
                       semop(id3, &downc, 1);
                       sm->counter -= 1;
@@ -164,11 +168,15 @@ int main(){
                       semop(id2, &down, 1);
                       var = del(token[1], res, sm);
                       char tmp[64];
+
+                      //Ausgabe, wenn mehrere EInträge auf einmal gelöscht werden
                       if(var > 0){
                         sprintf(tmp, "%d", var);
                         write(fileDescriptor, tmp, strlen(tmp));
                         write(fileDescriptor, " Eintraege wurden geloescht!\n", 30);
                       }
+
+                      //Ausgabe, wenn nur ein Eintrag gelöscht wird
                       write(fileDescriptor, res, strlen(res));
                       puts("DEL funktioniert\n");
                       semop(id2, &up, 1);
@@ -179,10 +187,8 @@ int main(){
                     } else {
                       puts("Ungültige Eingabe vom Client\n");
                     }
-
                     bzero(in, sizeof(in));
               }
-
 	        close(fileDescriptor);
         }
     }

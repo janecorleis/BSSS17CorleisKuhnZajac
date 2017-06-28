@@ -24,6 +24,7 @@ int get(char *key, char *res, struct datenWrapper *sm, char **array) {
     for(i = 0; i < sm->current_length; i++) {
       if(strcmp(sm->entry[i].key, key) == 0) {
         strcpy(res, sm->entry[i].value);
+        printf("%s", sm->entry[i].value);
         return 0;
       }
     }
@@ -45,7 +46,6 @@ int get(char *key, char *res, struct datenWrapper *sm, char **array) {
       return -1;
     }
     return check;
-
 }
 
 /*****
@@ -65,8 +65,8 @@ int put(char *key, char *value, char *res, struct datenWrapper *sm) {
 
   //Ersetzt Value, falls Key bereits vorhanden
 	for(i = 0; i < LENGTH; i++) {
-		if(strcmp(sm->entry[i].key, key) ==0){
-			strcpy(res, sm->entry[i].value);
+		if(strcmp(sm->entry[i].key, key) == 0){
+			  strcpy(res, sm->entry[i].value);
   		  strcpy(sm->entry[i].value, value);
         printf("\nValue wurde ersetzt\n");
         return 0;
@@ -127,7 +127,6 @@ int del(char *key, char *res, struct datenWrapper *sm) {
       printf("Nichts gefunden");
       return -1;
     }
-
     return var;
 }
 
