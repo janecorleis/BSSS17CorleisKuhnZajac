@@ -12,7 +12,6 @@
 #include <sys/sem.h>
 #include <memory.h>
 #include "signal.h"
-#include <stdbool.h>
 
 int pid, id, id2, id3;
 
@@ -21,13 +20,13 @@ void bzero(void *to, size_t count) {
 }
 
 void handler(int sig) {
-    //Delete Sempahore.
+    //Lösche Sempahore
     printf("Beende Server\n");
     if (id2 >= 0)
         semctl(id2, 1, IPC_RMID, 0);
     if (id3 >= 0)
         shmctl(id3, 1, IPC_RMID, 0);
-    //Delete Shared Memory
+    //Lösche Shared Memory
     if (id >= 0)
         shmctl(id, IPC_RMID, NULL);
     exit(0);
@@ -35,24 +34,21 @@ void handler(int sig) {
 
 int main(){
 
-    int sock;
+    int sock, fileDescriptor;
+    int var, i, read_size;
     struct sockaddr_in server;
     struct sockaddr_in client;
-    int fileDescriptor;
+    struct datenWrapper *sm;
+    struct sembuf up, down, upc, downc;
     unsigned long client_len;
-    client_len = sizeof(client);
-    char in[2000];
+    char in[2000], res[2000];
     char *seperator = " ";
 	  char *token[256];
-	  char res[2000];
-    int var, i;
-    int read_size;
-    struct datenWrapper *sm;
     char *array[LENGTH];
-    struct sembuf up, down, upc, downc;
-    bool check = true;
 
-    //Here we bind the signals to our handler function
+    client_len = sizeof(client);
+
+    //Signale an Handler-Funktion binden
     signal(SIGINT, handler);
     signal(SIGTERM, handler);
 
@@ -77,10 +73,12 @@ int main(){
         printf("Error on listening");
     };
 
+    //Shared-Memory anlegen
     id = shmget(IPC_PRIVATE, sizeof(DATENWRAPPER), IPC_CREAT|0777);
     sm = (struct datenWrapper *) shmat (id, 0, 0);
     sm->current_length = 0;
 
+    //Semaphor für Speicher anlegen
     id2 = semget(IPC_PRIVATE, 1, IPC_CREAT|0777);
     if(id2==1){
       printf("geht nicht");
@@ -98,6 +96,7 @@ int main(){
     up.sem_op = 1;
     up.sem_flg = SEM_UNDO;
 
+    //zweiten Semaphor für Zähler anlegen
     id3 = semget(IPC_PRIVATE, 1, IPC_CREAT|0777);
     if(id3==1){
       printf("geht nicht");
@@ -127,63 +126,62 @@ int main(){
             } else if(pid == 0){
                 //Kindprozess
                close(sock);
-			         //char greet[14] = "Hallo Client\n";
-               //write (fileDescriptor, greet, strlen(greet));
-
-               //bzero(in, sizeof(in));
-	            while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
+	             while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
                     bzero(res, sizeof(res));
 			              strtoken(in, seperator, token, 3);
-                if(strcmp(token[0], "PUT") == 0){
-                    semop(id2, &down, 1);
-                    var = put(token[1], token[2], res, sm);
-                    write(fileDescriptor, res, strlen(res));
-                    puts("PUT funktioniert\n");
-                    //sleep(5);
-                    semop(id2, &up, 1);
-                } else if (strcmp(token[0], "GET") == 0){
-                    semop(id3, &downc, 1);
-                    sm->counter += 1;
-                    if(sm->counter == 1){
-                      semop(id2, &down, 1);
-                    }
-                    semop(id3, &upc, 1);
-                    var = get(token[1], res, sm, array);
-                    if(var > 0){
-                      for(i = 0; i < var; i++){
-                        write(fileDescriptor, array[i], strlen(array[i]));
-                        array[i] = NULL;
-                      }
-                    }
-                    write(fileDescriptor, res, strlen(res));
-                    semop(id3, &downc, 1);
-                    sm->counter -= 1;
-                    if(sm->counter == 0){
-                      semop(id2, &up, 1);
-                    }
-                    puts("GET funktioniert\n");
-                    semop(id3, &upc, 1);
-                } else if (strcmp (token[0], "DEL") == 0){
-                    semop(id2, &down, 1);
-                    var = del(token[1], res, sm, array);
-                    char tmp[64];
-                    if(var > 0){
-                      sprintf(tmp, "%d", var);
-                      write(fileDescriptor, tmp, strlen(tmp));
-                      write(fileDescriptor, " Eintraege wurden geloescht!\n", 30);
-                    }
-                    write(fileDescriptor, res, strlen(res));
-                    puts("DEL funktioniert\n");
-                    semop(id2, &up, 1);
-                }else if(strcmp(token[0], "close") == 0){
-                    close(fileDescriptor);
-                } else {
-                    puts("Ungültige Eingabe vom Client\n");
-                }
 
-            bzero(in, sizeof(in));
-		        //write(fileDescriptor, res, strlen(res));
-	        }
+                    if(strcmp(token[0], "PUT") == 0){
+                      semop(id2, &down, 1);
+                      var = put(token[1], token[2], res, sm);
+                      write(fileDescriptor, res, strlen(res));
+                      puts("PUT funktioniert\n");
+                      semop(id2, &up, 1);
+
+                    } else if (strcmp(token[0], "GET") == 0){
+                      semop(id3, &downc, 1);
+                      sm->counter += 1;
+                      if(sm->counter == 1){
+                        semop(id2, &down, 1);
+                      }
+                      semop(id3, &upc, 1);
+                      var = get(token[1], res, sm, array);
+                      if(var > 0){
+                        for(i = 0; i < var; i++){
+                          write(fileDescriptor, array[i], strlen(array[i]));
+                          array[i] = NULL;
+                        }
+                      }
+                      if(var == 0) write(fileDescriptor, res, strlen(res));
+                      semop(id3, &downc, 1);
+                      sm->counter -= 1;
+                      if(sm->counter == 0){
+                        semop(id2, &up, 1);
+                      }
+                      puts("GET funktioniert\n");
+                      semop(id3, &upc, 1);
+
+                    } else if (strcmp (token[0], "DEL") == 0){
+                      semop(id2, &down, 1);
+                      var = del(token[1], res, sm);
+                      char tmp[64];
+                      if(var > 0){
+                        sprintf(tmp, "%d", var);
+                        write(fileDescriptor, tmp, strlen(tmp));
+                        write(fileDescriptor, " Eintraege wurden geloescht!\n", 30);
+                      }
+                      write(fileDescriptor, res, strlen(res));
+                      puts("DEL funktioniert\n");
+                      semop(id2, &up, 1);
+
+                    } else if (strcmp(token[0], "close") == 0){
+                      close(fileDescriptor);
+
+                    } else {
+                      puts("Ungültige Eingabe vom Client\n");
+                    }
+
+                    bzero(in, sizeof(in));
+              }
 
 	        close(fileDescriptor);
         }

@@ -3,7 +3,7 @@
 
 #define LENGTH 32
 #define DIM 255
-#include <stdbool.h>
+
 
 struct daten {
 	char key[LENGTH];
@@ -16,11 +16,11 @@ typedef struct datenWrapper {
 		int counter;
 } DATENWRAPPER;
 
-struct daten kv[LENGTH];
+//struct daten kv[LENGTH]; wird wegen Shared-Memory nicht länger benötigt
 
 extern int put(char *key, char* value, char* res, struct datenWrapper *sm);
 extern int get(char* key, char* res, struct datenWrapper *sm, char **array);
-extern int del(char* key, char* res, struct datenWrapper *sm, char **array);
+extern int del(char* key, char* res, struct datenWrapper *sm);
 extern int strtoken(char *str, char *separator, char **token, int size);
 extern bool wildCard(const char *pattern, const char *candidate, int p, int c);
 
