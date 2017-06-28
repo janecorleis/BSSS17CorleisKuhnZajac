@@ -1,3 +1,5 @@
+//Jane Corleis, Nathalie Kuhn, Simone Zajac
+
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 

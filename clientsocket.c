@@ -1,3 +1,5 @@
+//Jane Corleis, Nathalie Kuhn, Simone Zajac
+
 #include <stdio.h>
 #include <string.h>
 #include <sys/socket.h>
@@ -25,6 +27,7 @@ int main(){
   server.sin_family = AF_INET;
   server.sin_port = htons(1337);
 
+  //stellt Verbindung mit dem Server her
   if(connect(sock, (struct sockaddr *) &server, sizeof(server))<0){
       perror("Connect failed. Error");
       exit(1);
@@ -38,6 +41,7 @@ int main(){
     printf("Please enter message: ");
     fgets(message, 1000, stdin);
 
+    //schreibt Nachricht an den Server
     n = write(sock, message, strlen(message));
 
     if(n < 0){
@@ -45,6 +49,7 @@ int main(){
       exit(1);
     }
 
+    //Antwort vom Server lesen
     n = read(sock, server_reply, sizeof(server_reply));
 
     if(n < 0){

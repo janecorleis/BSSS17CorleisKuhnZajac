@@ -1,3 +1,5 @@
+//Jane Corleis, Nathalie Kuhn, Simone Zajac
+
 #include <stdio.h>
 #include "functions.h"
 #include <string.h>
@@ -56,7 +58,7 @@ int get(char *key, char *res, struct datenWrapper *sm, char **array) {
 *******/
 
 int put(char *key, char *value, char *res, struct datenWrapper *sm) {
-  //Speicher ist voll
+  //Falls Speicher voll ist
   if(sm->current_length == LENGTH) {
     strcpy(res, "Es koennen keine Daten hinzugefuegt werden!");
     printf("\nEs koennen keine Daten hinzugefuegt werden!\n");

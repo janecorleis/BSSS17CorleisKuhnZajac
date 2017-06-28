@@ -1,3 +1,5 @@
+//Jane Corleis, Nathalie Kuhn, Simone Zajac
+
 #include <stdio.h>
 #include "functions.h"
 #include <sys/types.h>
@@ -52,6 +54,7 @@ int main(){
     signal(SIGINT, handler);
     signal(SIGTERM, handler);
 
+    //Socket erstellen
     sock = socket(AF_INET, SOCK_STREAM, 0);
     if (sock < 0){
         perror("creating stream socket");
@@ -65,6 +68,7 @@ int main(){
     server.sin_addr.s_addr = INADDR_ANY;
     server.sin_port = htons(1337);
 
+    //Adresse an das Socket binden
     if(bind(sock, (struct sockaddr *) &server, sizeof(server)) < 0) {
         printf("Error on Binding");
     };
@@ -169,7 +173,7 @@ int main(){
                       var = del(token[1], res, sm);
                       char tmp[64];
 
-                      //Ausgabe, wenn mehrere EInträge auf einmal gelöscht werden
+                      //Ausgabe, wenn mehrere Einträge auf einmal gelöscht werden
                       if(var > 0){
                         sprintf(tmp, "%d", var);
                         write(fileDescriptor, tmp, strlen(tmp));
