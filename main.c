@@ -12,6 +12,7 @@
 #include <sys/sem.h>
 #include <memory.h>
 #include "signal.h"
+#include <stdbool.h>
 
 int pid, id, id2, id3;
 
@@ -24,6 +25,8 @@ void handler(int sig) {
     printf("Beende Server\n");
     if (id2 >= 0)
         semctl(id2, 1, IPC_RMID, 0);
+    if (id3 >= 0)
+        shmctl(id3, 1, IPC_RMID, 0);
     //Delete Shared Memory
     if (id >= 0)
         shmctl(id, IPC_RMID, NULL);
@@ -39,7 +42,6 @@ int main(){
     unsigned long client_len;
     client_len = sizeof(client);
     char in[2000];
-    char out[2000];
     char *seperator = " ";
 	  char *token[256];
 	  char res[2000];
@@ -48,6 +50,7 @@ int main(){
     struct datenWrapper *sm;
     char *array[LENGTH];
     struct sembuf up, down, upc, downc;
+    bool check = true;
 
     //Here we bind the signals to our handler function
     signal(SIGINT, handler);
@@ -124,16 +127,17 @@ int main(){
             } else if(pid == 0){
                 //Kindprozess
                close(sock);
-			    char greet[14] = "Hallo Client\n";
-                write (fileDescriptor, greet, strlen(greet));
+			         //char greet[14] = "Hallo Client\n";
+               //write (fileDescriptor, greet, strlen(greet));
 
                //bzero(in, sizeof(in));
-	            while (recv(fileDescriptor, in, 2000,0) > 0){
+	            while (read_size = recv(fileDescriptor, in, 2000,0) > 0){
                     bzero(res, sizeof(res));
-			    strtoken(in, seperator, token, 3);
+			              strtoken(in, seperator, token, 3);
                 if(strcmp(token[0], "PUT") == 0){
                     semop(id2, &down, 1);
                     var = put(token[1], token[2], res, sm);
+                    write(fileDescriptor, res, strlen(res));
                     puts("PUT funktioniert\n");
                     //sleep(5);
                     semop(id2, &up, 1);
@@ -151,6 +155,7 @@ int main(){
                         array[i] = NULL;
                       }
                     }
+                    write(fileDescriptor, res, strlen(res));
                     semop(id3, &downc, 1);
                     sm->counter -= 1;
                     if(sm->counter == 0){
@@ -161,16 +166,23 @@ int main(){
                 } else if (strcmp (token[0], "DEL") == 0){
                     semop(id2, &down, 1);
                     var = del(token[1], res, sm, array);
+                    char tmp[64];
+                    if(var > 0){
+                      sprintf(tmp, "%d", var);
+                      write(fileDescriptor, tmp, strlen(tmp));
+                      write(fileDescriptor, " Eintraege wurden geloescht!\n", 30);
+                    }
+                    write(fileDescriptor, res, strlen(res));
                     puts("DEL funktioniert\n");
                     semop(id2, &up, 1);
                 }else if(strcmp(token[0], "close") == 0){
-                    shutdown(fileDescriptor, 2);
+                    close(fileDescriptor);
                 } else {
                     puts("Ungültige Eingabe vom Client\n");
                 }
 
             bzero(in, sizeof(in));
-		        write(fileDescriptor, res, strlen(res));
+		        //write(fileDescriptor, res, strlen(res));
 	        }
 
 	        close(fileDescriptor);

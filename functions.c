@@ -60,7 +60,7 @@ int put(char *key, char *value, char *res, struct datenWrapper *sm) {
 		if(strcmp(sm->entry[a].key, key) ==0){
 			strcpy(res, sm->entry[a].value);
   		  strcpy(sm->entry[a].value, value);
-        printf("\nValue wurde ersetzt");
+        printf("\nValue wurde ersetzt\n");
         return 0;
 		}
 	}

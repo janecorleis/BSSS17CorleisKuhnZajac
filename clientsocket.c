@@ -1,85 +1,58 @@
 #include <stdio.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/socket.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <unistd.h>
+#include <arpa/inet.h>
+#include <stdlib.h>
 
-#define PORT 1337
+void bzero(void *to, size_t count){
+  memset(to, 0, count);
+}
 
-int main(int argc, char *argv[]) {
-	struct sockaddr_in server;
-	struct hostent *host_info;
-	int sockfd, n;
-	char buffer[256];
+int main(){
+  int sock, n;
+  struct sockaddr_in, server;
+  char message[1000], server_reply[1000];
 
-	if(argc != 2) {
-		fprinf(stderr, "usage: client <hostname>\n");
-		exit(2);
-	}
-
-	sockfd = socket(AF_INET, SOCK_STREAM, 0);
-
-	if (sockfd < 0) {
-		perror("ERROR opening socket");
-		exit(1);
-	}
-
-	server.sin_family = AF_INET;
-
-	host_info = gethostbyname(argv[1]);
-
-	if (host_info == NULL) {
-		fprintf(stderr,"ERROR, no such host\n");
-		exit(0);
+  sock = socket(AF_INET, SOCK_STREAM, 0);
+  if(sock < 0){
+    printf("Could not create socket");
+    exit(1);
   }
 
-	bzero((char *) &serv_addr, sizeof(serv_addr));
+  puts("Socket created\n");
 
-	memcpy(&server.sin_addr. host_info->h.addr. host_info->h_length);
-	/* copies internet address to server address */
-	//bcopy(hp->h_addr, &server.sin_addr, hp->h_length);
-	server.sin_port = htons(PORT);
+  server.sin_addr.s_addr = inet_addr("127.0.0.1");
+  server.sin_family = AF_INET;
+  server.sin_port = htons(1337);
 
-	/* Mit Server verbinden */
-	if(connect(sockfd, (struct sockadrr*) &server, sizeof(server)) < 0) {
-		perror("ERROR connecting");
-		exit(1);
-	}
+  if(connect(sock, (struct sockaddr *) &server, sizeof(server))<0){
+      perror("Connect failed. Error");
+      exit(1);
+  }
 
-	/* Nach Nachricht vom User fragen, diese wird vom Server gelesen */
-	printf("Please enter message: ");
-	bzero(buffer, 256);
-	fgets(buffer, 255, stdin);
+  puts("Connected\n");
 
-	/* Nachricht an Server senden */
-	n = write(sockfd, buffer, strlen(buffer));
-	if (n < 0) {
-		perror("ERROR writing to socket");
-		exit(1);
-	}
+  while(1){
+    bzero(message, 1000);
+    bzero(server_reply, 1000);
+    printf("Please enter message: ");
+    fgets(message, 1000, stdin);
 
-	/* Antwort des Servers lesen */
-	bzero(buffer, 256);
-	n = read(sockfd, buffer, 255);
-	if (n < 0) {
-		perror("ERROR reading from socket");
-		exit(1);
-	}
+    n = write(sock, message, strlen(message));
 
-	printf("%s\n", buffer);
-	return 0;
+    if(n < 0){
+      printf("Error writing to Server\n"); fllush(0);
+      exit(1);
+    }
+
+    n = read(sock, server_reply, sizeof(server_reply));
+
+    if(n < 0){
+      printf("Error reading from Server\n"); fllush(0);
+      exit(1);
+    }
+    printf("%s", server_reply);
+  }
+  close(sock);
+  return 0;
 }
-	/* read input from stdin */
-	/*while(run=read(0,buf,BUF_SIZE)) {
-		if(run<0) {
-			perror(“error reading from stdin”);
-			exit(1);
-		}*/
- 	/* write buffer to stream socket */
- 		/*if(write(sock,buf,run) < 0) {
-			perror(“writing on stream socket”);
-			exit(1);
-		}
-	}*/
-	/*close(sock);*/
